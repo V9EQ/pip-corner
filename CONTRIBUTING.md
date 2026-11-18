@@ -1,7 +1,7 @@
 # Contributing
 
-Use GNOME Shell 51. Read [Architecture](docs/architecture.md) and check current
-upstream APIs before changing window management.
+Use GNOME Shell 48–51 on Wayland. Read [Architecture](docs/architecture.md) and
+check current upstream APIs before changing window management.
 
 ## Conventions
 

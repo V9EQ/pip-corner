@@ -1,7 +1,7 @@
 # Architecture
 
-API references reviewed on **2026-11-19** against GNOME Shell 51.1, Mutter 51,
-and Google PiP extension 1.14. API inspection is not live Wayland verification.
+API references reviewed on **2026-11-19** against Shell/Mutter tags 48.0, 49.0,
+50.0, and 51.1, plus Google PiP extension 1.14.
 
 ## Modules
 
@@ -16,6 +16,14 @@ and Google PiP extension 1.14. API inspection is not live Wayland verification.
 `src/` contains runtime code; `schemas/` contains GSettings XML. The Makefile
 stages files under `.build/extension` and packs them at the ZIP root. Build output
 is ignored. Follow the repository layout used by Package Updates.
+
+## Compatibility
+
+GNOME 48–51 use the same runtime code. All used window properties, PID/frame APIs,
+display signals, and ESM entry points exist in the reviewed tags. GNOME 51 adds a
+sprite argument to `grab-op-begin`; the handler ignores it. Preferences require
+libadwaita 1.4+. GNOME 51.1 has user-reported runtime verification; 48–50 have only
+source/API review. Older and future versions are not declared.
 
 ## Window lifecycle
 
@@ -51,7 +59,8 @@ acknowledgements. There is no polling, drag resistance, or position-change handl
 
 ## References
 
-- [GNOME Shell 51 porting guide](https://gjs.guide/extensions/upgrading/gnome-shell-51.html)
+- Shell porting guides: [48](https://gjs.guide/extensions/upgrading/gnome-shell-48.html), [49](https://gjs.guide/extensions/upgrading/gnome-shell-49.html), [50](https://gjs.guide/extensions/upgrading/gnome-shell-50.html), [51](https://gjs.guide/extensions/upgrading/gnome-shell-51.html)
+- Tagged sources: [Mutter 48.0](https://github.com/GNOME/mutter/tree/48.0/src), [49.0](https://github.com/GNOME/mutter/tree/49.0/src), [50.0](https://github.com/GNOME/mutter/tree/50.0/src), [51.1](https://github.com/GNOME/mutter/tree/51.1/src); corresponding Shell tags checked for ESM entry points
 - [GSettings and preferences](https://gjs.guide/extensions/development/preferences.html)
 - [Extension review and cleanup rules](https://gjs.guide/extensions/review-guidelines/review-guidelines.html)
 - [Meta.Window API](https://mutter.gnome.org/meta/class.Window.html), [PID semantics](https://mutter.gnome.org/meta/method.Window.get_pid.html), and [grab operations](https://mutter.gnome.org/meta/signal.Display.grab-op-end.html); target signatures checked in `/usr/lib/mutter-51/Meta-51.gir`

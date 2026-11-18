@@ -1,14 +1,14 @@
 # PiP Corner
 
-A GNOME Shell **51** extension that keeps Chromium video Picture-in-Picture above
+A GNOME Shell **48–51** extension that keeps Chromium video Picture-in-Picture above
 other windows and places it in a configurable corner on Wayland. Works with
 [Picture-in-Picture Extension (by Google)](https://chromewebstore.google.com/detail/picture-in-picture-extens/hkgfoiooedgoejojocmhlaklaeopbecg)
 and Chromium's built-in video PiP.
 
 ## Installation
 
-Requires GNOME Shell 51, GJS, GTK 4, libadwaita, GLib tools, GNU make, and
-`gnome-extensions`. Node.js is needed only for build-time syntax checks.
+Requires GNOME Shell 48–51 on Wayland, GJS, GTK 4, libadwaita 1.4+, GLib tools,
+GNU make, and `gnome-extensions`. Node.js is needed only for build-time syntax checks.
 
 ```sh
 make install
@@ -55,8 +55,8 @@ do not move it. Disabling restores the previous Always on Top flag and leaves ge
   window from the same process. Shell cannot identify the originating extension.
 - Always on Top means above normal windows, not above Shell UI or every fullscreen
   application. Other window-management extensions can conflict.
-- Syntax, schemas, packaging, and preferences widgets are checked. Interactive
-  Chromium behavior on Wayland still needs manual verification.
+- GNOME 51.1 has user-reported runtime verification. GNOME 48–50 are supported
+  based on upstream API/source review, not live-session testing.
 
 ## Build and removal
 
