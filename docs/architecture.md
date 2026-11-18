@@ -20,6 +20,29 @@ is controlled by the compositor. A Shell extension can use `Meta.Window.make_abo
 No browser extension ID is exposed on `Meta.Window`: built-in video PiP and PiP
 from the Google extension cannot be distinguished; both should work.
 
+## Detection and Always on Top
+
+`windowManager.js` observes `Meta.Display::window-created` and existing actors.
+It waits for `Meta.Window:mapped` and rechecks late `title`, `wm-class` and
+`gtk-application-id` notifications. Only NORMAL windows with an exact browser ID
+and exact PiP title qualify; matching is case-insensitive and NFC-normalized.
+Russian `Картинка в картинке` and Ukrainian `Картинка в картинці` were checked
+against Chromium translation catalogs. No broad title substring or browser-PID rule is used.
+
+`notify::above` reapplies `make_above()` if a managed window loses the flag.
+Disabling or losing a match restores the flag only if it was originally unset.
+Unmanaged windows are disconnected without further window operations. No timers,
+focus changes, workspace changes or persistent browser/desktop setting changes.
+Above means Mutter's above-normal layer, not above Shell UI/lock screen or an
+unconditional guarantee over fullscreen clients. Other window-management extensions
+can conflict. A normal browser window deliberately given the exact PiP title can
+be a false positive: Mutter exposes no dedicated Chromium-video-PiP role.
+
+Validation for this stage: JavaScript syntax, `make pack`, archive inspection and
+installed GIR property/signal inspection. Manual checks after installation: open
+PiP before/after enabling, switch focus to another application, close/reopen PiP,
+and disable/re-enable; ordinary browser windows must remain untouched.
+
 ## Delivery plan
 
 1. Repository scaffold, packaging and documented API contracts.

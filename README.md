@@ -4,11 +4,16 @@ A GNOME Shell **51** extension for Chromium video Picture-in-Picture on Wayland.
 Designed for [Picture-in-Picture Extension (by Google)](https://chromewebstore.google.com/detail/picture-in-picture-extens/hkgfoiooedgoejojocmhlaklaeopbecg).
 This repository follows the source/staging/documentation layout of Package Updates.
 
-## Development stages
+## Features
 
-Each feature is delivered in a separate commit: window detection and Always on Top,
-corner placement and margins, fixed size, then monitor-relative sizing.
-The initial scaffold does not yet modify windows.
+- Automatically keeps recognized Chromium/Google Chrome video PiP above normal windows.
+- Handles PiP already open when enabled and metadata arriving after window creation.
+- Recognizes English, Russian and Ukrainian PiP titles.
+- Restores the previous Always on Top state on disable; does not steal focus.
+
+Corner placement and sizing are added in subsequent feature commits.
+Open PiP with the Google extension button (or Alt+P); no extra GNOME button is needed.
+Built-in Chromium video PiP is handled too: Shell cannot identify which extension opened it.
 
 ## Build and installation
 
