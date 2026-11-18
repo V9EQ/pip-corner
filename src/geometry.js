@@ -15,6 +15,19 @@ export function requestedSize(area, options) {
     };
 }
 
+export function magneticPosition(area, frame, marginX, marginY, distance) {
+    const start = cornerPosition(area, frame, 'top-left', marginX, marginY);
+    const end = cornerPosition(area, frame, 'bottom-right', marginX, marginY);
+    const snap = (value, first, last) => {
+        const target = Math.abs(value - first) <= Math.abs(value - last) ? first : last;
+        return Math.abs(value - target) <= distance ? target : value;
+    };
+    return {
+        x: frame.width <= area.width ? snap(frame.x, start.x, end.x) : frame.x,
+        y: frame.height <= area.height ? snap(frame.y, start.y, end.y) : frame.y,
+    };
+}
+
 export function cornerPosition(area, frame, corner, marginX, marginY) {
     // Reduce margins when the client cannot fit them; never use physical pixels.
     const xMargin = Math.min(marginX, Math.floor(Math.max(0, area.width - frame.width) / 2));

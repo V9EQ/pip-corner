@@ -29,6 +29,7 @@ gnome-extensions prefs pip-corner@v9eq.github.io
 | --- | --- | --- |
 | Corner | Bottom right | Any of the four corners |
 | Horizontal / vertical margin | 16 / 16 | 0–500 logical pixels |
+| Edge magnetism / snap distance | On / 24 | 4–96 logical pixels; aligns on release |
 | Size mode | Fixed size | Fixed, browser size, or monitor-relative |
 | Fixed width / height | 480 × 270 | Logical pixels, including the frame |
 | Relative width / height | 25% / 25% | 5–100% of the current monitor's work area |
@@ -39,9 +40,10 @@ Changes apply immediately. Placement excludes panels and reserved space; size
 requests are capped to leave room for margins. Chromium may impose its own size
 constraints. Width and height are independent requests, not video-aspect settings.
 
-You can move or resize PiP manually. Resizing reanchors it; settings, monitor, or
-work-area changes reapply the size policy. Disabling restores the previous Always
-on Top flag but leaves the window's position and size unchanged.
+Moving and resizing stay free. Release near any edge to align with its margin;
+near a corner, both axes align. Distant edges do not attract PiP. Layout settings,
+monitor, or work-area changes reapply the corner/size policy; magnetism settings
+do not move it. Disabling restores the previous Always on Top flag and leaves geometry unchanged.
 
 ## Limitations
 

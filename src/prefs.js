@@ -25,6 +25,17 @@ export default class PipCornerPreferences extends ExtensionPreferences {
         this._addSpin(settings, placement, 'margin-x', 'Horizontal margin', 0, 500);
         this._addSpin(settings, placement, 'margin-y', 'Vertical margin', 0, 500);
 
+        const snapping = new Adw.PreferencesGroup({
+            title: 'Edge magnetism',
+            description: 'Release PiP near an edge to align it with the margin. Movement stays free; distant edges do not attract the window.',
+        });
+        page.add(snapping);
+        const snap = new Adw.SwitchRow({title: 'Snap to nearby edges'});
+        snapping.add(snap);
+        settings.bind('snap-enabled', snap, 'active', Gio.SettingsBindFlags.DEFAULT);
+        const distance = this._addSpin(settings, snapping, 'snap-distance', 'Snap distance', 4, 96);
+        settings.bind('snap-enabled', distance, 'sensitive', Gio.SettingsBindFlags.GET);
+
         const sizing = new Adw.PreferencesGroup({
             title: 'Size',
             description: 'Requested dimensions include the window frame. Chromium may enforce its own minimum, maximum or aspect ratio.',

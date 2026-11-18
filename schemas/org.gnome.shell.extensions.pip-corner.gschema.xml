@@ -21,6 +21,15 @@
       <default>16</default>
       <summary>Vertical inset in logical pixels</summary>
     </key>
+    <key name="snap-enabled" type="b">
+      <default>true</default>
+      <summary>Snap PiP gently to nearby work-area edges after moving</summary>
+    </key>
+    <key name="snap-distance" type="i">
+      <range min="4" max="96"/>
+      <default>24</default>
+      <summary>Maximum snap distance in logical pixels</summary>
+    </key>
     <key name="size-mode" type="s">
       <choices>
         <choice value="browser"/>

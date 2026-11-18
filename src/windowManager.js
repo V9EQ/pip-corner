@@ -2,14 +2,16 @@
 import GLib from 'gi://GLib';
 import Meta from 'gi://Meta';
 
-import {cornerPosition, requestedSize} from './geometry.js';
+import {cornerPosition, magneticPosition, requestedSize} from './geometry.js';
 import {matchesPip} from './matching.js';
 
 export class PipWindowManager {
     constructor(settings) {
         this._settings = settings;
         this._windows = new Map();
-        this._settingsId = settings.connect('changed', () => {
+        this._settingsId = settings.connect('changed', (_settings, key) => {
+            if (key === 'snap-enabled' || key === 'snap-distance')
+                return;
             for (const [window, state] of this._windows)
                 this._refresh(window, state, true);
         });
@@ -25,6 +27,26 @@ export class PipWindowManager {
             if (state)
                 this._queueLayout(window, state, true);
         });
+        this._grabBeginId = global.display.connect('grab-op-begin', (_display, window) => {
+            const state = this._windows.get(window);
+            if (!state?.managed)
+                return;
+            state.grabbed = true;
+            state.manualPosition = true;
+            this._cancelLayout(state);
+        });
+        this._grabEndId = global.display.connect('grab-op-end', (_display, window, operation) => {
+            const state = this._windows.get(window);
+            if (!state?.grabbed)
+                return;
+            state.grabbed = false;
+            // Unconstrained moves deliberately bypass snapping; resizing stays free.
+            if ((operation === Meta.GrabOp.MOVING || operation === Meta.GrabOp.KEYBOARD_MOVING) &&
+                this._settings.get_boolean('snap-enabled')) {
+                state.snapRequested = true;
+                this._queueLayout(window, state);
+            }
+        });
         for (const actor of global.get_window_actors())
             this._watch(actor.meta_window);
     }
@@ -36,6 +58,7 @@ export class PipWindowManager {
         const state = {
             signals: [], managed: false, originalAbove: false,
             layoutId: 0, resizeRequested: false,
+            grabbed: false, manualPosition: false, snapRequested: false,
         };
         this._windows.set(window, state);
         // Metadata may arrive after window-created, especially on native Wayland.
@@ -79,8 +102,12 @@ export class PipWindowManager {
     }
 
     _queueLayout(window, state, resize = false) {
-        if (!state.managed)
+        if (!state.managed || state.grabbed)
             return;
+        if (resize) {
+            state.manualPosition = false;
+            state.snapRequested = false;
+        }
         state.resizeRequested ||= resize;
         if (state.layoutId)
             return;
@@ -117,22 +144,34 @@ export class PipWindowManager {
                 frame = window.get_frame_rect();
             }
         }
-        // Wayland resize is asynchronous. Reanchor on size-changed using the
-        // accepted frame; never resend size here and fight client constraints.
-        const {x, y} = cornerPosition(area, frame,
-            this._settings.get_string('corner'), marginX, marginY);
+        // Wayland acknowledgements must not undo a manual move or resize.
+        if (state.manualPosition && (!state.snapRequested || !this._settings.get_boolean('snap-enabled'))) {
+            state.snapRequested = false;
+            return;
+        }
+        const position = state.manualPosition
+            ? magneticPosition(area, frame, marginX, marginY, this._settings.get_int('snap-distance'))
+            : cornerPosition(area, frame, this._settings.get_string('corner'), marginX, marginY);
+        state.snapRequested = false;
+        const {x, y} = position;
         if (frame.x !== x || frame.y !== y)
             window.move_frame(false, x, y);
+    }
+
+    _cancelLayout(state) {
+        state.resizeRequested = false;
+        state.snapRequested = false;
+        if (state.layoutId) {
+            GLib.Source.remove(state.layoutId);
+            state.layoutId = 0;
+        }
     }
 
     _release(window, state, restore) {
         const wasManaged = state.managed;
         state.managed = false;
-        state.resizeRequested = false;
-        if (state.layoutId) {
-            GLib.Source.remove(state.layoutId);
-            state.layoutId = 0;
-        }
+        state.grabbed = false;
+        this._cancelLayout(state);
         if (restore && wasManaged && !state.originalAbove)
             window.unmake_above();
     }
@@ -150,6 +189,8 @@ export class PipWindowManager {
         global.display.disconnect(this._createdId);
         global.display.disconnect(this._workareasId);
         global.display.disconnect(this._monitorId);
+        global.display.disconnect(this._grabBeginId);
+        global.display.disconnect(this._grabEndId);
         for (const [window, state] of this._windows)
             this._forget(window, state, true);
     }
