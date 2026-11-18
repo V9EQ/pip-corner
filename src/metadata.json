@@ -3,5 +3,6 @@
     "name": "PiP Corner",
     "description": "Keep Chromium video Picture-in-Picture above other windows and place it in a configurable screen corner on Wayland.",
     "shell-version": ["51"],
+    "settings-schema": "org.gnome.shell.extensions.pip-corner",
     "url": "https://github.com/V9EQ/pip-corner"
 }

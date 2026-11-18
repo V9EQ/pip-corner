@@ -8,7 +8,7 @@ This repository follows the source/staging/documentation layout of Package Updat
 
 - Automatically keeps recognized Chromium/Google Chrome video PiP above normal windows.
 - Handles PiP already open when enabled and metadata arriving after window creation.
-- Recognizes English, Russian and Ukrainian PiP titles.
+- Recognizes the English PiP title by default; add your own exact title in preferences.
 - Restores the previous Always on Top state on disable; does not steal focus.
 
 Corner placement and sizing are added in subsequent feature commits.
@@ -31,11 +31,23 @@ gnome-extensions enable pip-corner@v9eq.github.io
 Archive: `dist/pip-corner@v9eq.github.io.shell-extension.zip`.
 Installing/enabling is a manual step; building does not change the desktop.
 
+## Preferences
+
+```sh
+gnome-extensions prefs pip-corner@v9eq.github.io
+```
+
+**Additional PiP window title** adds one exact title alongside `Picture in picture`.
+Leave it empty for English defaults. **Additional browser app ID / WM class** is
+optional for Chromium builds using a different app ID. Matching ignores case and
+surrounding whitespace. Use Looking Glass (Alt+F2 → `lg`, Windows tab) to inspect
+a window's title and class. Settings take effect immediately.
+
 ## Repository layout
 
 ```text
 src/             Shell runtime, preferences and metadata
-schemas/         GSettings XML (introduced with preferences)
+schemas/         GSettings XML
 docs/            Architecture, limitations and upstream references
 .build/          Generated staging directory (ignored)
 dist/            Generated extension ZIP (ignored)

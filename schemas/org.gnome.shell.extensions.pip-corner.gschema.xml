@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.pip-corner" path="/org/gnome/shell/extensions/pip-corner/">
+    <key name="custom-title" type="s">
+      <default>''</default>
+      <summary>Additional exact PiP window title</summary>
+      <description>English Picture in picture is always recognized. Add a title used by your browser here. Matching ignores case and surrounding whitespace.</description>
+    </key>
+    <key name="custom-browser-id" type="s">
+      <default>''</default>
+      <summary>Additional exact browser app ID or WM class</summary>
+      <description>Chromium and Google Chrome are recognized by default. This field extends the browser allowlist; the PiP title must still match.</description>
+    </key>
+  </schema>
+</schemalist>

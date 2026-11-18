@@ -5,11 +5,7 @@ const BROWSER_IDS = new Set([
     'google-chrome-unstable', 'com.google.chrome',
 ]);
 
-const TITLES = new Set([
-    'picture in picture',
-    'картинка в картинке',
-    'картинка в картинці',
-]);
+const DEFAULT_TITLE = 'picture in picture';
 
 function normalize(value) {
     return (value ?? '').trim().normalize('NFC').toLowerCase();
@@ -21,5 +17,5 @@ export function matchesPip(identities, title, extraBrowser = '', extraTitle = ''
         return BROWSER_IDS.has(id) || (id !== '' && id === normalize(extraBrowser));
     });
     const name = normalize(title);
-    return browser && (TITLES.has(name) || (name !== '' && name === normalize(extraTitle)));
+    return browser && (name === DEFAULT_TITLE || (name !== '' && name === normalize(extraTitle)));
 }

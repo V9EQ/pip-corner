@@ -26,8 +26,11 @@ from the Google extension cannot be distinguished; both should work.
 It waits for `Meta.Window:mapped` and rechecks late `title`, `wm-class` and
 `gtk-application-id` notifications. Only NORMAL windows with an exact browser ID
 and exact PiP title qualify; matching is case-insensitive and NFC-normalized.
-Russian `Картинка в картинке` and Ukrainian `Картинка в картинці` were checked
-against Chromium translation catalogs. No broad title substring or browser-PID rule is used.
+Only the English `Picture in picture` title is built in. Preferences expose one
+additional exact title and one additional browser app ID / WM class, both empty
+by default. No language detection, title substring or browser-PID rule is used.
+GSettings changes recheck existing windows immediately; clearing an additional
+title releases windows that no longer match.
 
 `notify::above` reapplies `make_above()` if a managed window loses the flag.
 Disabling or losing a match restores the flag only if it was originally unset.
@@ -75,5 +78,3 @@ and disable/re-enable; ordinary browser windows must remain untouched.
 - [chrome.windows](https://developer.chrome.com/docs/extensions/reference/api/windows).
 - [Chromium video overlay implementation](https://github.com/chromium/chromium/blob/main/chrome/browser/ui/views/overlay/video_overlay_window_views.cc).
 - [Chromium English strings](https://github.com/chromium/chromium/blob/main/chrome/app/generated_resources.grd).
-- [Russian translations](https://github.com/chromium/chromium/blob/main/chrome/app/resources/generated_resources_ru.xtb).
-- [Ukrainian translations](https://github.com/chromium/chromium/blob/main/chrome/app/resources/generated_resources_uk.xtb).

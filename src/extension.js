@@ -5,7 +5,7 @@ import {PipWindowManager} from './windowManager.js';
 
 export default class PipCorner extends Extension {
     enable() {
-        this._manager = new PipWindowManager();
+        this._manager = new PipWindowManager(this.getSettings());
     }
 
     disable() {

@@ -4,8 +4,13 @@ import Meta from 'gi://Meta';
 import {matchesPip} from './matching.js';
 
 export class PipWindowManager {
-    constructor() {
+    constructor(settings) {
+        this._settings = settings;
         this._windows = new Map();
+        this._settingsId = settings.connect('changed', () => {
+            for (const [window, state] of this._windows)
+                this._refresh(window, state);
+        });
         this._createdId = global.display.connect('window-created', (_display, window) => {
             this._watch(window);
         });
@@ -38,7 +43,8 @@ export class PipWindowManager {
     _refresh(window, state) {
         const matches = window.get_window_type() === Meta.WindowType.NORMAL && matchesPip([
             window.get_wm_class(), window.get_gtk_application_id(),
-        ], window.get_title());
+        ], window.get_title(), this._settings.get_string('custom-browser-id'),
+        this._settings.get_string('custom-title'));
 
         if (!matches) {
             this._release(window, state, true);
@@ -67,6 +73,8 @@ export class PipWindowManager {
     }
 
     destroy() {
+        this._settings.disconnect(this._settingsId);
+        this._settings = null;
         global.display.disconnect(this._createdId);
         for (const [window, state] of this._windows)
             this._forget(window, state, true);
