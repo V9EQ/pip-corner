@@ -69,6 +69,29 @@ Stage checks: syntax, strict schema compilation and archive layout. Manual check
 all four corners, zero/large margins, a monitor with a negative origin, reserved
 panels, moving PiP to another monitor, unplug/replug and fractional scaling.
 
+## Fixed size and asynchronous configure
+
+`size-mode` defaults to `fixed` with `window-width=480` and `window-height=270`.
+`browser` leaves sizing to Chromium. Width/height are independent frame requests,
+not a video-aspect-ratio API. `fixedSize()` caps requests to the work area after
+bounded insets. Browser-imposed minimum/maximum/aspect-ratio constraints still win.
+
+The manager records a coalesced `resizeRequested` flag only for adoption,
+settings/work-area/monitor changes. It sends `move_resize_frame(false, ...)` once
+per policy event, then positions using `get_frame_rect()`. Native Wayland clients
+acknowledge resizing asynchronously: later `size-changed` queues placement only,
+not another size request. This avoids resize loops when Chromium rejects/clamps
+a requested size and permits manual resizing. Dimensions are not assumed to have
+changed synchronously. `move_frame()` corrects corner placement using the actual
+accepted frame, including client decoration, without another resize request.
+
+Stage checks: syntax/schema/ZIP, direct GJS introspection of Meta 51 methods and
+`mapped`, and constructing/closing the preferences widgets against installed GTK
+4.24/libadwaita 1.10 with `GSETTINGS_BACKEND=memory`, without presenting a window.
+Manual checks: 480×270, oversized/tiny requests, browser-size mode, portrait video,
+manual resize and repeated open/close; confirm no endless resize or idle source.
+This is not yet an interactive test of Chromium's Wayland configure responses.
+
 ## Delivery plan
 
 1. Repository scaffold, packaging and documented API contracts.

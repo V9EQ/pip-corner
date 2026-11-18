@@ -13,7 +13,8 @@ This repository follows the source/staging/documentation layout of Package Updat
 - Horizontal/vertical margins: **16 logical pixels** by default; corner: **bottom right**.
 - Restores the previous Always on Top state on disable; does not steal focus.
 
-Sizing is added in subsequent feature commits.
+- Fixed frame size: **480 × 270 logical pixels** by default, or keep Chromium’s size.
+
 Open PiP with the Google extension button (or Alt+P); no extra GNOME button is needed.
 Built-in Chromium video PiP is handled too: Shell cannot identify which extension opened it.
 
@@ -44,6 +45,13 @@ margin** accept 0–500 logical pixels, measured from the work area (not behind
 panels). Margins shrink if there is not enough space. Settings apply to open PiP.
 You can drag the window freely; a later resize, settings or work-area change
 anchors it again. Disabling leaves its geometry in place.
+
+**Size mode** selects **Fixed size** (default) or **Keep browser size**. Fixed
+width/height are requested on opening PiP and on settings/work-area/monitor
+changes, clamped to the available space after margins. Chromium can impose a
+minimum, maximum or aspect ratio, so the accepted dimensions may differ. Manual
+resizing remains possible until the next policy-triggered resize. Width and
+height are independent requests; the extension does not infer video dimensions.
 
 **Additional PiP window title** adds one exact title alongside `Picture in picture`.
 Leave it empty for English defaults. **Additional browser app ID / WM class** is

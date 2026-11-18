@@ -21,6 +21,24 @@
       <default>16</default>
       <summary>Vertical inset in logical pixels</summary>
     </key>
+    <key name="size-mode" type="s">
+      <choices>
+        <choice value="browser"/>
+        <choice value="fixed"/>
+      </choices>
+      <default>'fixed'</default>
+      <summary>PiP size policy</summary>
+    </key>
+    <key name="window-width" type="i">
+      <range min="160" max="7680"/>
+      <default>480</default>
+      <summary>Requested frame width in logical pixels</summary>
+    </key>
+    <key name="window-height" type="i">
+      <range min="90" max="4320"/>
+      <default>270</default>
+      <summary>Requested frame height in logical pixels</summary>
+    </key>
     <key name="custom-title" type="s">
       <default>''</default>
       <summary>Additional exact PiP window title</summary>

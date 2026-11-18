@@ -25,6 +25,28 @@ export default class PipCornerPreferences extends ExtensionPreferences {
         this._addSpin(settings, placement, 'margin-x', 'Horizontal margin', 0, 500);
         this._addSpin(settings, placement, 'margin-y', 'Vertical margin', 0, 500);
 
+        const sizing = new Adw.PreferencesGroup({
+            title: 'Size',
+            description: 'Requested dimensions include the window frame. Chromium may enforce its own minimum, maximum or aspect ratio.',
+        });
+        page.add(sizing);
+        this._addChoice(window, settings, sizing, 'size-mode', 'Size mode', [
+            ['browser', 'Keep browser size'], ['fixed', 'Fixed size'],
+        ]);
+        const fixed = new Adw.PreferencesGroup({title: 'Fixed dimensions'});
+        page.add(fixed);
+        this._addSpin(settings, fixed, 'window-width', 'Width', 160, 7680);
+        this._addSpin(settings, fixed, 'window-height', 'Height', 90, 4320);
+        const updateSensitivity = () => {
+            fixed.sensitive = settings.get_string('size-mode') === 'fixed';
+        };
+        updateSensitivity();
+        const modeId = settings.connect('changed::size-mode', updateSensitivity);
+        window.connect('close-request', () => {
+            settings.disconnect(modeId);
+            return false;
+        });
+
         const detection = new Adw.PreferencesGroup({
             title: 'Window detection',
             description: 'English “Picture in picture” is recognized automatically. Optional fields extend the defaults; both browser and title must match.',
