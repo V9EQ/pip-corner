@@ -32,13 +32,23 @@ export default class PipCornerPreferences extends ExtensionPreferences {
         page.add(sizing);
         this._addChoice(window, settings, sizing, 'size-mode', 'Size mode', [
             ['browser', 'Keep browser size'], ['fixed', 'Fixed size'],
+            ['relative', 'Monitor-relative size'],
         ]);
         const fixed = new Adw.PreferencesGroup({title: 'Fixed dimensions'});
         page.add(fixed);
         this._addSpin(settings, fixed, 'window-width', 'Width', 160, 7680);
         this._addSpin(settings, fixed, 'window-height', 'Height', 90, 4320);
+        const relative = new Adw.PreferencesGroup({
+            title: 'Monitor-relative dimensions',
+            description: 'Percentages of the current monitor’s usable work area, capped to leave room for margins.',
+        });
+        page.add(relative);
+        this._addSpin(settings, relative, 'width-percent', 'Width (%)', 5, 100);
+        this._addSpin(settings, relative, 'height-percent', 'Height (%)', 5, 100);
         const updateSensitivity = () => {
-            fixed.sensitive = settings.get_string('size-mode') === 'fixed';
+            const mode = settings.get_string('size-mode');
+            fixed.sensitive = mode === 'fixed';
+            relative.sensitive = mode === 'relative';
         };
         updateSensitivity();
         const modeId = settings.connect('changed::size-mode', updateSensitivity);

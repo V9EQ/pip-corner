@@ -1,5 +1,12 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-export function fixedSize(area, width, height, marginX, marginY) {
+export function requestedSize(area, options) {
+    const {mode, marginX, marginY} = options;
+    if (mode === 'browser')
+        return null;
+    const width = mode === 'relative'
+        ? Math.round(area.width * options.widthPercent / 100) : options.width;
+    const height = mode === 'relative'
+        ? Math.round(area.height * options.heightPercent / 100) : options.height;
     const xMargin = Math.min(marginX, Math.floor((area.width - 1) / 2));
     const yMargin = Math.min(marginY, Math.floor((area.height - 1) / 2));
     return {

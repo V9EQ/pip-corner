@@ -1,19 +1,18 @@
 # Contributing
 
-Use GNOME Shell 51 and read [Architecture](docs/architecture.md) before changing
-window management. Check current upstream documentation and the installed
-`/usr/lib/mutter-51/Meta-51.gir`; record sources and limitations alongside each feature.
+Use GNOME Shell 51. Read [Architecture](docs/architecture.md) and check current
+upstream APIs before changing window management.
 
-- Keep Shell/Meta imports out of GTK/Adwaita preferences and vice versa.
-- Create resources only in `enable()`. Keep `disable()` synchronous (required in 51).
-- Disconnect every signal and cancel every scheduled source on disable/unmanage.
-- Use exact, configurable browser/title matching, never title substrings alone.
-- Use Mutter logical frame coordinates and work areas, not physical pixel/scaling guesses.
-- Do not poll, shell out to window-control tools or change Chromium's profile.
-- Keep pure geometry separate from GI/lifecycle code.
-- Commit each finished feature separately, including its documentation.
-- Do not install/enable the extension, change desktop settings, launch another Shell,
-  install dependencies or push without approval.
+## Conventions
+
+- Use ESM, four-space indentation, single quotes, and semicolons.
+- Keep Shell/Meta imports out of GTK preferences and vice versa.
+- Create resources in `enable()`; keep `disable()` synchronous and clean up every
+  signal and scheduled source. Do not poll or shell out to window-control tools.
+- Keep geometry independent of GI and use logical frame/work-area coordinates.
+- Commit each feature separately. Do not push, install, enable, change desktop
+  settings, or launch another Shell session without approval.
+- Follow the reference project's approach: do not add a test suite unless requested.
 
 ## Validation
 
@@ -24,10 +23,14 @@ unzip -l dist/pip-corner@v9eq.github.io.shell-extension.zip
 git diff --check
 ```
 
-Follow the reference project's approach: do not add a test suite unless requested.
-Syntax checks, strict schema compilation, API inspection and archive inspection
-are not interactive Wayland verification. Manual validation instructions belong
-in the architecture document. Node is a development dependency only; runtime is GJS.
+Checks cover JavaScript syntax, strict schema compilation, and archive layout.
+For widget smoke checks, use an in-memory GSettings backend without presenting a
+window. These checks do not replace live Chromium/Wayland verification.
 
-Only include runtime JavaScript, metadata, schema XML and LICENSE in the ZIP.
-Generated schema caches, build outputs and documentation stay out of Git/the ZIP.
+After installing, check opening/closing PiP, all corners and size modes, manual
+moves/resizes, monitor changes, fractional scaling, and disable/re-enable. Confirm
+ordinary browser windows remain untouched and cleanup leaves no errors.
+
+Keep documentation in concise English, use sentence-case headings, and describe
+the current behavior rather than implementation history. Avoid repeating code or
+settings tables. See the [Google style highlights](https://developers.google.com/style/highlights).

@@ -2,7 +2,7 @@
 import GLib from 'gi://GLib';
 import Meta from 'gi://Meta';
 
-import {cornerPosition, fixedSize} from './geometry.js';
+import {cornerPosition, requestedSize} from './geometry.js';
 import {matchesPip} from './matching.js';
 
 export class PipWindowManager {
@@ -104,14 +104,17 @@ export class PipWindowManager {
         let frame = window.get_frame_rect();
         if (state.resizeRequested) {
             state.resizeRequested = false;
-            if (this._settings.get_string('size-mode') === 'fixed') {
-                const size = fixedSize(area,
-                    this._settings.get_int('window-width'), this._settings.get_int('window-height'),
-                    marginX, marginY);
-                if (frame.width !== size.width || frame.height !== size.height) {
-                    window.move_resize_frame(false, frame.x, frame.y, size.width, size.height);
-                    frame = window.get_frame_rect();
-                }
+            const size = requestedSize(area, {
+                mode: this._settings.get_string('size-mode'),
+                width: this._settings.get_int('window-width'),
+                height: this._settings.get_int('window-height'),
+                widthPercent: this._settings.get_int('width-percent'),
+                heightPercent: this._settings.get_int('height-percent'),
+                marginX, marginY,
+            });
+            if (size && (frame.width !== size.width || frame.height !== size.height)) {
+                window.move_resize_frame(false, frame.x, frame.y, size.width, size.height);
+                frame = window.get_frame_rect();
             }
         }
         // Wayland resize is asynchronous. Reanchor on size-changed using the

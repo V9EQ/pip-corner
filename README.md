@@ -1,73 +1,68 @@
 # PiP Corner
 
-A GNOME Shell **51** extension for Chromium video Picture-in-Picture on Wayland.
-Designed for [Picture-in-Picture Extension (by Google)](https://chromewebstore.google.com/detail/picture-in-picture-extens/hkgfoiooedgoejojocmhlaklaeopbecg).
-This repository follows the source/staging/documentation layout of Package Updates.
+A GNOME Shell **51** extension that keeps Chromium video Picture-in-Picture above
+other windows and places it in a configurable corner on Wayland. Works with
+[Picture-in-Picture Extension (by Google)](https://chromewebstore.google.com/detail/picture-in-picture-extens/hkgfoiooedgoejojocmhlaklaeopbecg)
+and Chromium's built-in video PiP.
 
-## Features
+## Installation
 
-- Automatically keeps recognized Chromium/Google Chrome video PiP above normal windows.
-- Handles PiP already open when enabled and metadata arriving after window creation.
-- Recognizes the English PiP title by default; add your own exact title in preferences.
-- Places PiP in a configurable corner of its current monitor’s work area.
-- Horizontal/vertical margins: **16 logical pixels** by default; corner: **bottom right**.
-- Restores the previous Always on Top state on disable; does not steal focus.
-
-- Fixed frame size: **480 × 270 logical pixels** by default, or keep Chromium’s size.
-
-Open PiP with the Google extension button (or Alt+P); no extra GNOME button is needed.
-Built-in Chromium video PiP is handled too: Shell cannot identify which extension opened it.
-
-## Build and installation
-
-Requires GNOME Shell 51, GJS, GNU make, Node.js (syntax checks), GLib tools and
-`gnome-extensions`. No browser patch, native messaging host, root access or X11
-window-control utility is required.
+Requires GNOME Shell 51, GJS, GTK 4, libadwaita, GLib tools, GNU make, and
+`gnome-extensions`. Node.js is needed only for build-time syntax checks.
 
 ```sh
-make pack
 make install
-# On Wayland, log out and back in before enabling a newly installed extension.
+# Log out and back in on Wayland, then enable:
 gnome-extensions enable pip-corner@v9eq.github.io
 ```
 
-Archive: `dist/pip-corner@v9eq.github.io.shell-extension.zip`.
-Installing/enabling is a manual step; building does not change the desktop.
+Open PiP using your browser extension's button or Alt+P. No browser modifications,
+root access, or X11 utilities are needed.
 
-## Preferences
+## Settings
 
 ```sh
 gnome-extensions prefs pip-corner@v9eq.github.io
 ```
 
-**Corner** selects any of the four corners. **Horizontal margin** and **Vertical
-margin** accept 0–500 logical pixels, measured from the work area (not behind
-panels). Margins shrink if there is not enough space. Settings apply to open PiP.
-You can drag the window freely; a later resize, settings or work-area change
-anchors it again. Disabling leaves its geometry in place.
+| Setting | Default | Options |
+| --- | --- | --- |
+| Corner | Bottom right | Any of the four corners |
+| Horizontal / vertical margin | 16 / 16 | 0–500 logical pixels |
+| Size mode | Fixed size | Fixed, browser size, or monitor-relative |
+| Fixed width / height | 480 × 270 | Logical pixels, including the frame |
+| Relative width / height | 25% / 25% | 5–100% of the current monitor's work area |
+| Additional PiP title | Empty | One exact title alongside `Picture in picture` |
+| Additional browser ID | Empty | One exact app ID / WM class alongside Chromium and Chrome |
 
-**Size mode** selects **Fixed size** (default) or **Keep browser size**. Fixed
-width/height are requested on opening PiP and on settings/work-area/monitor
-changes, clamped to the available space after margins. Chromium can impose a
-minimum, maximum or aspect ratio, so the accepted dimensions may differ. Manual
-resizing remains possible until the next policy-triggered resize. Width and
-height are independent requests; the extension does not infer video dimensions.
+Changes apply immediately. Placement excludes panels and reserved space; size
+requests are capped to leave room for margins. Chromium may impose its own size
+constraints. Width and height are independent requests, not video-aspect settings.
 
-**Additional PiP window title** adds one exact title alongside `Picture in picture`.
-Leave it empty for English defaults. **Additional browser app ID / WM class** is
-optional for Chromium builds using a different app ID. Matching ignores case and
-surrounding whitespace. Use Looking Glass (Alt+F2 → `lg`, Windows tab) to inspect
-a window's title and class. Settings take effect immediately.
+You can move or resize PiP manually. Resizing reanchors it; settings, monitor, or
+work-area changes reapply the size policy. Disabling restores the previous Always
+on Top flag but leaves the window's position and size unchanged.
 
-## Repository layout
+## Limitations
 
-```text
-src/             Shell runtime, preferences and metadata
-schemas/         GSettings XML
-docs/            Architecture, limitations and upstream references
-.build/          Generated staging directory (ignored)
-dist/            Generated extension ZIP (ignored)
+- Only English titles are built in. For another title or browser ID, inspect the
+  window in Looking Glass (Alt+F2 → `lg`, **Windows**) and use the additional fields.
+  Matching ignores case and surrounding whitespace.
+- Targets Chromium video PiP, not Firefox or arbitrary Document PiP windows.
+  Shell cannot distinguish built-in PiP from PiP opened by a browser extension.
+- Always on Top means above normal windows, not above Shell UI or every fullscreen
+  application. Other window-management extensions can conflict.
+- Syntax, schemas, packaging, and preferences widgets are checked. Interactive
+  Chromium behavior on Wayland still needs manual verification.
+
+## Build and removal
+
+`make pack` creates `dist/pip-corner@v9eq.github.io.shell-extension.zip` without
+installing it. See [Contributing](CONTRIBUTING.md) and [Architecture](docs/architecture.md).
+
+```sh
+gnome-extensions disable pip-corner@v9eq.github.io
+gnome-extensions uninstall pip-corner@v9eq.github.io
 ```
 
-See [Architecture](docs/architecture.md) and [Contributing](CONTRIBUTING.md).
-Code is [GPL-2.0-or-later](LICENSE). This is an independent GNOME extension, not a Google product.
+[GPL-2.0-or-later](LICENSE). Independent project; not affiliated with Google.

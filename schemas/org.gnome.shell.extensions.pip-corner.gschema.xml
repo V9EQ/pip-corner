@@ -25,6 +25,7 @@
       <choices>
         <choice value="browser"/>
         <choice value="fixed"/>
+        <choice value="relative"/>
       </choices>
       <default>'fixed'</default>
       <summary>PiP size policy</summary>
@@ -38,6 +39,16 @@
       <range min="90" max="4320"/>
       <default>270</default>
       <summary>Requested frame height in logical pixels</summary>
+    </key>
+    <key name="width-percent" type="i">
+      <range min="5" max="100"/>
+      <default>25</default>
+      <summary>Frame width as a percentage of the monitor work area</summary>
+    </key>
+    <key name="height-percent" type="i">
+      <range min="5" max="100"/>
+      <default>25</default>
+      <summary>Frame height as a percentage of the monitor work area</summary>
     </key>
     <key name="custom-title" type="s">
       <default>''</default>
