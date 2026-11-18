@@ -20,9 +20,12 @@ is ignored. Follow the repository layout used by Package Updates.
 ## Window lifecycle
 
 Observe existing windows and `window-created`; recheck late title/app-ID metadata
-and `mapped`. Only NORMAL windows matching both allowlists qualify. Chromium
-exposes no dedicated PiP role or originating extension ID, so a browser window
-with the exact PiP title can be a false positive.
+and `mapped`. Require NORMAL type, an exact PiP title, and a recognized browser.
+Native Wayland PiP may omit its app ID: in that case, require another tracked
+Wayland window with the same nonzero PID and a recognized browser ID. Recheck
+when peer metadata changes or peers close; never fall back to title alone.
+Chromium exposes no dedicated PiP role, so an exact-title browser tab can still
+be a false positive.
 
 Save the original above flag, call `make_above()`, and reapply it on `notify::above`.
 On disable or mismatch, reverse only the extension's stacking change. On unmanage,
@@ -51,7 +54,7 @@ acknowledgements. There is no polling, drag resistance, or position-change handl
 - [GNOME Shell 51 porting guide](https://gjs.guide/extensions/upgrading/gnome-shell-51.html)
 - [GSettings and preferences](https://gjs.guide/extensions/development/preferences.html)
 - [Extension review and cleanup rules](https://gjs.guide/extensions/review-guidelines/review-guidelines.html)
-- [Meta.Window API](https://mutter.gnome.org/meta/class.Window.html) and [grab operations](https://mutter.gnome.org/meta/signal.Display.grab-op-end.html); target signatures checked in `/usr/lib/mutter-51/Meta-51.gir`
+- [Meta.Window API](https://mutter.gnome.org/meta/class.Window.html), [PID semantics](https://mutter.gnome.org/meta/method.Window.get_pid.html), and [grab operations](https://mutter.gnome.org/meta/signal.Display.grab-op-end.html); target signatures checked in `/usr/lib/mutter-51/Meta-51.gir`
 - [Chromium video overlay and localized title](https://github.com/chromium/chromium/blob/main/chrome/browser/ui/views/overlay/video_overlay_window_views.cc)
 - [Google PiP extension source](https://github.com/GoogleChromeLabs/picture-in-picture-chrome-extension)
 - [Video PiP API](https://developer.chrome.com/blog/watch-video-using-picture-in-picture): no screen-position setter

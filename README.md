@@ -51,7 +51,8 @@ do not move it. Disabling restores the previous Always on Top flag and leaves ge
   window in Looking Glass (Alt+F2 → `lg`, **Windows**) and use the additional fields.
   Matching ignores case and surrounding whitespace.
 - Targets Chromium video PiP, not Firefox or arbitrary Document PiP windows.
-  Shell cannot distinguish built-in PiP from PiP opened by a browser extension.
+  If native Wayland PiP has no app ID, detection requires a recognized browser
+  window from the same process. Shell cannot identify the originating extension.
 - Always on Top means above normal windows, not above Shell UI or every fullscreen
   application. Other window-management extensions can conflict.
 - Syntax, schemas, packaging, and preferences widgets are checked. Interactive

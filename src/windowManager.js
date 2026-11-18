@@ -3,7 +3,7 @@ import GLib from 'gi://GLib';
 import Meta from 'gi://Meta';
 
 import {cornerPosition, magneticPosition, requestedSize} from './geometry.js';
-import {matchesPip} from './matching.js';
+import {matchesBrowser, matchesTitle} from './matching.js';
 
 export class PipWindowManager {
     constructor(settings) {
@@ -12,8 +12,7 @@ export class PipWindowManager {
         this._settingsId = settings.connect('changed', (_settings, key) => {
             if (key === 'snap-enabled' || key === 'snap-distance')
                 return;
-            for (const [window, state] of this._windows)
-                this._refresh(window, state, true);
+            this._refreshAll(true);
         });
         this._createdId = global.display.connect('window-created', (_display, window) => {
             this._watch(window);
@@ -64,7 +63,7 @@ export class PipWindowManager {
         // Metadata may arrive after window-created, especially on native Wayland.
         for (const property of ['title', 'wm-class', 'gtk-application-id', 'mapped']) {
             state.signals.push(window.connect(`notify::${property}`, () => {
-                this._refresh(window, state);
+                this._refreshAll();
             }));
         }
         state.signals.push(window.connect('notify::above', () => {
@@ -76,17 +75,44 @@ export class PipWindowManager {
         }));
         state.signals.push(window.connect('unmanaged', () => {
             this._forget(window, state, false);
+            this._refreshAll();
         }));
-        this._refresh(window, state);
+        this._refreshAll();
+    }
+
+    _matches(window) {
+        if (window.get_window_type() !== Meta.WindowType.NORMAL ||
+            !matchesTitle(window.get_title(), this._settings.get_string('custom-title')))
+            return false;
+
+        const identities = [window.get_wm_class(), window.get_gtk_application_id()];
+        const extraBrowser = this._settings.get_string('custom-browser-id');
+        if (matchesBrowser(identities, extraBrowser))
+            return true;
+
+        // Chromium's native Wayland video PiP can have no app ID at all.
+        // Require a known browser peer, not just a title or an arbitrary PID.
+        const pid = window.get_pid();
+        if (identities.some(id => id?.trim()) || pid <= 0 ||
+            window.get_client_type() !== Meta.WindowClientType.WAYLAND)
+            return false;
+        for (const peer of this._windows.keys()) {
+            if (peer !== window && peer.get_client_type() === Meta.WindowClientType.WAYLAND &&
+                peer.get_pid() === pid && matchesBrowser([
+                    peer.get_wm_class(), peer.get_gtk_application_id(),
+                ], extraBrowser))
+                return true;
+        }
+        return false;
+    }
+
+    _refreshAll(resize = false) {
+        for (const [window, state] of this._windows)
+            this._refresh(window, state, resize);
     }
 
     _refresh(window, state, resize = false) {
-        const matches = window.get_window_type() === Meta.WindowType.NORMAL && matchesPip([
-            window.get_wm_class(), window.get_gtk_application_id(),
-        ], window.get_title(), this._settings.get_string('custom-browser-id'),
-        this._settings.get_string('custom-title'));
-
-        if (!matches) {
+        if (!this._matches(window)) {
             this._release(window, state, true);
             return;
         }

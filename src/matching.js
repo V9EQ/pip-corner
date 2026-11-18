@@ -11,11 +11,14 @@ function normalize(value) {
     return (value ?? '').trim().normalize('NFC').toLowerCase();
 }
 
-export function matchesPip(identities, title, extraBrowser = '', extraTitle = '') {
-    const browser = identities.some(identity => {
+export function matchesBrowser(identities, extraBrowser = '') {
+    return identities.some(identity => {
         const id = normalize(identity);
         return BROWSER_IDS.has(id) || (id !== '' && id === normalize(extraBrowser));
     });
+}
+
+export function matchesTitle(title, extraTitle = '') {
     const name = normalize(title);
-    return browser && (name === DEFAULT_TITLE || (name !== '' && name === normalize(extraTitle)));
+    return name === DEFAULT_TITLE || (name !== '' && name === normalize(extraTitle));
 }
