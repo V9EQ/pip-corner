@@ -34,7 +34,7 @@ title releases windows that no longer match.
 
 `notify::above` reapplies `make_above()` if a managed window loses the flag.
 Disabling or losing a match restores the flag only if it was originally unset.
-Unmanaged windows are disconnected without further window operations. No timers,
+Unmanaged windows are disconnected without further window operations. No polling,
 focus changes, workspace changes or persistent browser/desktop setting changes.
 Above means Mutter's above-normal layer, not above Shell UI/lock screen or an
 unconditional guarantee over fullscreen clients. Other window-management extensions
@@ -45,6 +45,29 @@ Validation for this stage: JavaScript syntax, `make pack`, archive inspection an
 installed GIR property/signal inspection. Manual checks after installation: open
 PiP before/after enabling, switch focus to another application, close/reopen PiP,
 and disable/re-enable; ordinary browser windows must remain untouched.
+
+## Corner placement and margins
+
+`geometry.js` computes frame coordinates independently of GI. The manager uses
+`get_monitor()` and `get_work_area_for_monitor()`, not the primary monitor or
+physical screen size. The default is bottom right, inset 16 logical pixels on
+each axis. `corner`, `margin-x` and `margin-y` are range/choice-validated GSettings.
+`prefs.js` uses GTK4/libadwaita ComboRow, SpinRow and EntryRow in a separate process.
+
+Layout runs through a coalesced GLib idle source after initial mapping,
+`size-changed`, settings changes, display `workareas-changed` and
+`window-entered-monitor`. The last signal's `(monitor, window)` arguments were
+checked in Meta-51.gir. Using actual frame dimensions keeps the margin correct
+when Chromium chooses a different size. Margins reduce symmetrically if space
+is insufficient; an oversized browser-constrained window cannot fit completely.
+Idle sources are removed on release/disable/unmanage. No position-change handler
+is installed: dragging is allowed, but the next layout event reanchors the window.
+Original geometry is not restored on disable; the extension only reverses its
+Always on Top change, not the user's intervening move/resize operations.
+
+Stage checks: syntax, strict schema compilation and archive layout. Manual checks:
+all four corners, zero/large margins, a monitor with a negative origin, reserved
+panels, moving PiP to another monitor, unplug/replug and fractional scaling.
 
 ## Delivery plan
 

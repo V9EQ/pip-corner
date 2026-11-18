@@ -9,9 +9,11 @@ This repository follows the source/staging/documentation layout of Package Updat
 - Automatically keeps recognized Chromium/Google Chrome video PiP above normal windows.
 - Handles PiP already open when enabled and metadata arriving after window creation.
 - Recognizes the English PiP title by default; add your own exact title in preferences.
+- Places PiP in a configurable corner of its current monitor’s work area.
+- Horizontal/vertical margins: **16 logical pixels** by default; corner: **bottom right**.
 - Restores the previous Always on Top state on disable; does not steal focus.
 
-Corner placement and sizing are added in subsequent feature commits.
+Sizing is added in subsequent feature commits.
 Open PiP with the Google extension button (or Alt+P); no extra GNOME button is needed.
 Built-in Chromium video PiP is handled too: Shell cannot identify which extension opened it.
 
@@ -36,6 +38,12 @@ Installing/enabling is a manual step; building does not change the desktop.
 ```sh
 gnome-extensions prefs pip-corner@v9eq.github.io
 ```
+
+**Corner** selects any of the four corners. **Horizontal margin** and **Vertical
+margin** accept 0–500 logical pixels, measured from the work area (not behind
+panels). Margins shrink if there is not enough space. Settings apply to open PiP.
+You can drag the window freely; a later resize, settings or work-area change
+anchors it again. Disabling leaves its geometry in place.
 
 **Additional PiP window title** adds one exact title alongside `Picture in picture`.
 Leave it empty for English defaults. **Additional browser app ID / WM class** is
