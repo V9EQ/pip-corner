@@ -31,7 +31,7 @@ gnome-extensions prefs pip-corner@v9eq.github.io
 | Horizontal / vertical margin | 16 / 16 | 0–500 logical pixels |
 | Edge magnetism / snap distance | On / 24 | 4–96 logical pixels; aligns on release |
 | Size mode | Fixed size | Fixed, browser size, or monitor-relative |
-| Fixed width / height | 480 × 270 | Logical pixels, including the frame |
+| Fixed width / height | 560 × 315 | Logical pixels, including the frame |
 | Relative width / height | 25% / 25% | 5–100% of the current monitor's work area |
 | Additional PiP title | Empty | One exact title alongside `Picture in picture` |
 | Additional browser ID | Empty | One exact app ID / WM class alongside Chromium and Chrome |

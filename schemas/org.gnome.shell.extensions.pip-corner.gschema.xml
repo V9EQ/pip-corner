@@ -41,12 +41,12 @@
     </key>
     <key name="window-width" type="i">
       <range min="160" max="7680"/>
-      <default>480</default>
+      <default>560</default>
       <summary>Requested frame width in logical pixels</summary>
     </key>
     <key name="window-height" type="i">
       <range min="90" max="4320"/>
-      <default>270</default>
+      <default>315</default>
       <summary>Requested frame height in logical pixels</summary>
     </key>
     <key name="width-percent" type="i">
