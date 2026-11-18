@@ -1,0 +1,3 @@
+.build/
+dist/
+schemas/gschemas.compiled
